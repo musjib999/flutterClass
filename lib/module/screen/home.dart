@@ -1,5 +1,5 @@
 import 'package:api_flutter/core/service_injector/service_injector.dart';
-import 'package:api_flutter/shared/model/api_model.dart';
+import 'package:api_flutter/module/screen/add_contact.dart';
 import 'package:flutter/material.dart';
 
 class MyHomePage extends StatefulWidget {
@@ -10,15 +10,14 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  Uri postUrl = Uri.parse('https://jsonplaceholder.typicode.com/posts');
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Contact App'),
       ),
-      body: FutureBuilder<ApiModel>(
-        future: si.apiService.getRequest(postUrl),
+      body: FutureBuilder<dynamic>(
+        future: si.contactService.getAllContact(),
         builder: (context, snapshot) {
           final data = snapshot.data;
           if (snapshot.connectionState == ConnectionState.waiting) {
@@ -36,23 +35,44 @@ class _MyHomePageState extends State<MyHomePage> {
               ],
             );
           }
-          return ListView.builder(
+          return ListView.separated(
             itemBuilder: (context, index) {
-              final title = data!.body[index]['title'];
+              String name = data[index].data()['name'];
+              String phone = data[index].data()['phone'];
               return ListTile(
                 leading: CircleAvatar(
-                  child: Text('${title[0].toUpperCase()}'),
+                  child: Text(name[0].toUpperCase()),
                 ),
                 title: Text(
-                  title,
+                  name,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
+                subtitle: Text(phone),
               );
             },
-            itemCount: snapshot.data!.body.length,
+            itemCount: snapshot.data!.length,
+            separatorBuilder: (BuildContext context, int index) =>
+                const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 15.0, vertical: 0),
+              child: Divider(),
+            ),
           );
         },
+      ),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) {
+                return const AddContactPage();
+              },
+            ),
+          );
+        },
+        label: const Text('Add Contact'),
+        icon: const Icon(Icons.add),
       ),
     );
   }

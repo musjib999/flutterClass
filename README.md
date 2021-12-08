@@ -1,8 +1,8 @@
 # api_flutter
 
-First Class
+Second Class
 
-- FutureBuilder
-- Code Refactoring and folder structure 
-- Service Injector
-- Model and ApiService i.e (getRequest and postRequest method)
+- Configuring of Firebase and cloud firestore: enableMultidex to true at app/build.gradle, implementation for multidex at the same directory 
+- Creating project, collection and documents 
+- Getting the list of documents in cloud firestore
+- Add contact page UI
