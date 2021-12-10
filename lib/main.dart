@@ -11,20 +11,21 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-        future: Firebase.initializeApp(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
-          }
-          return MaterialApp(
-            title: 'Contacts',
-            theme: ThemeData(
-              primarySwatch: Colors.blue,
-            ),
-            home: const MyHomePage(),
+      future: Firebase.initializeApp(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(
+            child: CircularProgressIndicator(),
           );
-        });
+        }
+        return MaterialApp(
+          title: 'Contacts',
+          theme: ThemeData(
+            primarySwatch: Colors.blue,
+          ),
+          home: const MyHomePage(),
+        );
+      },
+    );
   }
 }
