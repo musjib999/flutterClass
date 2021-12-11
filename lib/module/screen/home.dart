@@ -1,5 +1,6 @@
 import 'package:api_flutter/core/service_injector/service_injector.dart';
 import 'package:api_flutter/module/screen/add_contact.dart';
+import 'package:api_flutter/shared/model/contact_model.dart';
 import 'package:flutter/material.dart';
 
 class MyHomePage extends StatefulWidget {
@@ -21,8 +22,13 @@ class _MyHomePageState extends State<MyHomePage> {
         builder: (context, snapshot) {
           final data = snapshot.data;
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(
-              child: CircularProgressIndicator(),
+            return Container(
+              width: double.infinity,
+              height: double.infinity,
+              color: Colors.white,
+              child: const Center(
+                child: CircularProgressIndicator(),
+              ),
             );
           } else if (snapshot.hasError) {
             return Column(
@@ -35,29 +41,44 @@ class _MyHomePageState extends State<MyHomePage> {
               ],
             );
           }
-          return ListView.separated(
-            itemBuilder: (context, index) {
-              String name = data[index].data()['name'];
-              String phone = data[index].data()['phone'];
-              return ListTile(
-                leading: CircleAvatar(
-                  child: Text(name[0].toUpperCase()),
-                ),
-                title: Text(
-                  name,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-                subtitle: Text(phone),
-              );
-            },
-            itemCount: snapshot.data!.length,
-            separatorBuilder: (BuildContext context, int index) =>
-                const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 15.0, vertical: 0),
-              child: Divider(),
-            ),
-          );
+          return data.length < 1
+              ? Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: const [
+                      Icon(
+                        Icons.person_off,
+                        size: 45.0,
+                      ),
+                      SizedBox(height: 15),
+                      Text('No Contact added Yet!!!'),
+                    ],
+                  ),
+                )
+              : ListView.separated(
+                  itemBuilder: (context, index) {
+                    ContactModel contact = data[index];
+                    return ListTile(
+                      leading: CircleAvatar(
+                        child: Text(contact.name[0].toUpperCase()),
+                      ),
+                      title: Text(
+                        contact.name,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      subtitle: Text(contact.phone),
+                    );
+                  },
+                  itemCount: snapshot.data!.length,
+                  separatorBuilder: (BuildContext context, int index) =>
+                      const Padding(
+                    padding:
+                        EdgeInsets.symmetric(horizontal: 15.0, vertical: 0),
+                    child: Divider(),
+                  ),
+                );
         },
       ),
       floatingActionButton: FloatingActionButton.extended(
