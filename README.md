@@ -1,10 +1,10 @@
 # api_flutter
 
-Third Class
+Fourth Class
 
-- Refactoring getAllContact function using contactModel 
-- Form validation 
-- Adding a document to cloud firestore
-- Show dialog after adding a contact using the toast package
-- Handle empty collecting 
+- Single contact screen and Edit screen 
+- Stream using firebase, stream builder 
+- Delete a  contact from firestore
+- Edit contact from firestore
+
 

@@ -23,6 +23,7 @@ class InputTextField extends StatelessWidget {
     return TextFormField(
       controller: controller,
       validator: validator,
+      // initialValue: 'initValue',
       decoration: InputDecoration(
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(5.0),

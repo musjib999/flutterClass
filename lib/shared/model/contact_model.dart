@@ -1,6 +1,7 @@
 class ContactModel {
-  String name;
-  String email;
-  String phone;
-  ContactModel({required this.name, required this.email, required this.phone});
+  final String phone;
+  final String name;
+  final String email;
+
+  ContactModel({required this.phone, required this.name, required this.email});
 }

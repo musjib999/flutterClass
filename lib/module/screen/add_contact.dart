@@ -1,5 +1,5 @@
 import 'package:api_flutter/core/service_injector/service_injector.dart';
-import 'package:api_flutter/shared/widget/text_field.dart';
+import 'package:api_flutter/shared/widget/form/text_field.dart';
 import 'package:flutter/material.dart';
 
 class AddContactPage extends StatefulWidget {
