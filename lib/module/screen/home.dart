@@ -1,5 +1,6 @@
 import 'package:api_flutter/core/service_injector/service_injector.dart';
 import 'package:api_flutter/module/screen/add_contact.dart';
+import 'package:api_flutter/module/screen/single_contact.dart';
 import 'package:api_flutter/shared/model/contact_model.dart';
 import 'package:flutter/material.dart';
 
@@ -17,10 +18,9 @@ class _MyHomePageState extends State<MyHomePage> {
       appBar: AppBar(
         title: const Text('Contact App'),
       ),
-      body: FutureBuilder<dynamic>(
-        future: si.contactService.getAllContact(),
+      body: StreamBuilder<dynamic>(
+        stream: si.contactService.getContactStream(),
         builder: (context, snapshot) {
-          final data = snapshot.data;
           if (snapshot.connectionState == ConnectionState.waiting) {
             return Container(
               width: double.infinity,
@@ -41,7 +41,8 @@ class _MyHomePageState extends State<MyHomePage> {
               ],
             );
           }
-          return data.length < 1
+          final data = snapshot.data!.docs;
+          return data.isEmpty
               ? Center(
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -58,10 +59,17 @@ class _MyHomePageState extends State<MyHomePage> {
                 )
               : ListView.separated(
                   itemBuilder: (context, index) {
-                    ContactModel contact = data[index];
+                    String id = data[index].id;
+                    ContactModel contact = ContactModel(
+                      phone: data[index].data()['phone'],
+                      name: data[index].data()['name'],
+                      email: data[index].data()['email'],
+                    );
                     return ListTile(
                       leading: CircleAvatar(
-                        child: Text(contact.name[0].toUpperCase()),
+                        child: Text(
+                          contact.name[0].toUpperCase(),
+                        ),
                       ),
                       title: Text(
                         contact.name,
@@ -69,9 +77,13 @@ class _MyHomePageState extends State<MyHomePage> {
                         overflow: TextOverflow.ellipsis,
                       ),
                       subtitle: Text(contact.phone),
+                      onTap: () => si.routerService.nextScreen(
+                        context,
+                        SingleContactPage(id: id),
+                      ),
                     );
                   },
-                  itemCount: snapshot.data!.length,
+                  itemCount: data.length,
                   separatorBuilder: (BuildContext context, int index) =>
                       const Padding(
                     padding:
@@ -82,16 +94,10 @@ class _MyHomePageState extends State<MyHomePage> {
         },
       ),
       floatingActionButton: FloatingActionButton.extended(
-        onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) {
-                return const AddContactPage();
-              },
-            ),
-          );
-        },
+        onPressed: () => si.routerService.nextScreen(
+          context,
+          const AddContactPage(),
+        ),
         label: const Text('Add Contact'),
         icon: const Icon(Icons.add),
       ),

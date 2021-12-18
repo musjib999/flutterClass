@@ -6,7 +6,11 @@ class ContactService {
   Future<List<ContactModel>> getAllContact() async {
     List<ContactModel> contactList = [];
     try {
-      await firestore.collection('contacts').get().then((value) {
+      await firestore
+          .collection('contacts')
+          .orderBy('name')
+          .get()
+          .then((value) {
         List<QueryDocumentSnapshot<Map<String, dynamic>>> contacts = value.docs;
         for (var contact in contacts) {
           contactList.add(
@@ -44,5 +48,59 @@ class ContactService {
       throw 'Error occured $e';
     }
     return contactModel;
+  }
+
+  Stream<QuerySnapshot> getContactStream() {
+    Stream<QuerySnapshot>? snapshot;
+    try {
+      snapshot = firestore.collection('contacts').orderBy('name').snapshots();
+    } catch (e) {
+      throw 'Error occured $e';
+    }
+    return snapshot;
+  }
+
+  Future<ContactModel?> getOneContact(String id) async {
+    ContactModel? contact;
+    try {
+      await firestore.collection('contacts').doc(id).get().then((value) {
+        contact = ContactModel(
+          name: value.data()!['name'],
+          email: value.data()!['email'],
+          phone: value.data()!['phone'],
+        );
+      });
+    } catch (e) {
+      contact = ContactModel(name: 'N/A', email: 'N/A', phone: 'N/A');
+      throw 'Error occured $e';
+    }
+    return contact;
+  }
+
+  Future<bool?> deleteOneContact(String id) async {
+    bool? isDeleted;
+    try {
+      await firestore.collection('contacts').doc(id).delete().then((value) {
+        isDeleted = true;
+      });
+    } catch (e) {
+      isDeleted = false;
+      throw 'Error occured $e';
+    }
+    return isDeleted;
+  }
+
+  Future<bool?> updateContact(
+      {required String id, required Map<String, dynamic> data}) async {
+    bool? isUpdated;
+    try {
+      await firestore.collection('contacts').doc(id).update(data).then((value) {
+        isUpdated = true;
+      });
+    } catch (e) {
+      isUpdated = false;
+      throw 'Error occured $e';
+    }
+    return isUpdated;
   }
 }
