@@ -83,7 +83,8 @@ class _AddContactPageState extends State<AddContactPage> {
                       Map<String, dynamic> contact = {
                         'name': name.text,
                         'phone': phone.text,
-                        'email': email.text
+                        'email': email.text,
+                        'image': '',
                       };
 
                       await si.contactService.addContact(contact).then(

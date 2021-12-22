@@ -1,8 +1,13 @@
+import 'dart:io';
+
 import 'package:api_flutter/shared/model/contact_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 
 class ContactService {
   FirebaseFirestore firestore = FirebaseFirestore.instance;
+  FirebaseStorage storage = FirebaseStorage.instance;
+
   Future<List<ContactModel>> getAllContact() async {
     List<ContactModel> contactList = [];
     try {
@@ -18,13 +23,14 @@ class ContactService {
               name: contact.data()['name'],
               email: contact.data()['email'],
               phone: contact.data()['phone'],
+              image: contact.data()['image'],
             ),
           );
         }
       });
     } catch (e) {
       contactList.add(
-        ContactModel(name: 'N/A', email: 'N/A', phone: 'N/A'),
+        ContactModel(name: 'N/A', email: 'N/A', phone: 'N/A', image: 'N/A'),
       );
       throw 'Error occured $e';
     }
@@ -40,11 +46,13 @@ class ContactService {
             name: value.data()!['name'],
             email: value.data()!['email'],
             phone: value.data()!['phone'],
+            image: value.data()!['image'],
           );
         });
       });
     } catch (e) {
-      contactModel = ContactModel(name: 'N/A', email: 'N/A', phone: 'N/A');
+      contactModel =
+          ContactModel(name: 'N/A', email: 'N/A', phone: 'N/A', image: 'N/A');
       throw 'Error occured $e';
     }
     return contactModel;
@@ -68,10 +76,12 @@ class ContactService {
           name: value.data()!['name'],
           email: value.data()!['email'],
           phone: value.data()!['phone'],
+          image: value.data()!['image'],
         );
       });
     } catch (e) {
-      contact = ContactModel(name: 'N/A', email: 'N/A', phone: 'N/A');
+      contact =
+          ContactModel(name: 'N/A', email: 'N/A', phone: 'N/A', image: 'N/A');
       throw 'Error occured $e';
     }
     return contact;
@@ -102,5 +112,23 @@ class ContactService {
       throw 'Error occured $e';
     }
     return isUpdated;
+  }
+
+  Future<int> savedImage({required String path, required File file}) async {
+    int totalBytes = 0;
+    await storage.ref(path).putFile(file).then((p0) {
+      // ignore: avoid_print
+      print('${p0.bytesTransferred} of ${p0.totalBytes}');
+      totalBytes = p0.totalBytes;
+    });
+    return totalBytes;
+  }
+
+  Future<String?> getImageUrl(String path) async {
+    String? url;
+    await storage.ref(path).getDownloadURL().then((value) {
+      url = value;
+    });
+    return url;
   }
 }

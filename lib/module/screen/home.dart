@@ -64,12 +64,16 @@ class _MyHomePageState extends State<MyHomePage> {
                       phone: data[index].data()['phone'],
                       name: data[index].data()['name'],
                       email: data[index].data()['email'],
+                      image: data[index].data()['image'],
                     );
                     return ListTile(
                       leading: CircleAvatar(
-                        child: Text(
-                          contact.name[0].toUpperCase(),
-                        ),
+                        child: contact.image == ''
+                            ? Text(
+                                contact.name[0].toUpperCase(),
+                              )
+                            : null,
+                        backgroundImage: NetworkImage(contact.image),
                       ),
                       title: Text(
                         contact.name,
