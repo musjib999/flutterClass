@@ -1,10 +1,10 @@
 # api_flutter
 
-Fourth Class
+Fifth Class
 
-- Single contact screen and Edit screen 
-- Stream using firebase, stream builder 
-- Delete a  contact from firestore
-- Edit contact from firestore
-
-
+- Firebase Storage 
+- How to use image picker either from gallary or camera
+- Use of argon button
+- Save file(picture) in firebase storage
+- Get url of the stored file(picture)
+- Save url as a field in cloud firestore

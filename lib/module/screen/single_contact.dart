@@ -34,6 +34,7 @@ class _SingleContactPageState extends State<SingleContactPage> {
             phone: snapshot.data.phone,
             name: snapshot.data.name,
             email: snapshot.data.email,
+            image: snapshot.data.image,
           );
           return Scaffold(
             appBar: AppBar(
@@ -80,10 +81,13 @@ class _SingleContactPageState extends State<SingleContactPage> {
                   Center(
                     child: CircleAvatar(
                       child: Text(
-                        contact.name[0].toUpperCase(),
+                        contact.image == ''
+                            ? contact.name[0].toUpperCase()
+                            : '',
                         style: const TextStyle(fontSize: 40),
                       ),
                       radius: 40,
+                      backgroundImage: NetworkImage(contact.image),
                     ),
                   ),
                   const SizedBox(height: 5),
