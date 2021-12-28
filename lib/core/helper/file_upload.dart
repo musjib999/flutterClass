@@ -26,6 +26,7 @@ class Helper {
     String id,
     Map<String, dynamic> updatedContact,
   ) async {
-    await si.contactService.updateContact(id: id, data: updatedContact);
+    await si.firebaseService
+        .updateDoc(collection: 'contacts', id: id, data: updatedContact);
   }
 }

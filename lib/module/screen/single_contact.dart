@@ -54,8 +54,8 @@ class _SingleContactPageState extends State<SingleContactPage> {
                           ),
                         );
                       } else {
-                        si.contactService
-                            .deleteOneContact(widget.id)
+                        si.firebaseService
+                            .deleteDoc(collection: 'contacts', id: widget.id)
                             .then((value) {
                           if (value == true) {
                             si.routerService.popScreen(context);

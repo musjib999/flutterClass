@@ -1,22 +1,19 @@
 import 'dart:io';
 
+import 'package:api_flutter/core/service_injector/service_injector.dart';
 import 'package:api_flutter/shared/model/contact_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 
 class ContactService {
-  FirebaseFirestore firestore = FirebaseFirestore.instance;
   FirebaseStorage storage = FirebaseStorage.instance;
 
   Future<List<ContactModel>> getAllContact() async {
     List<ContactModel> contactList = [];
     try {
-      await firestore
-          .collection('contacts')
-          .orderBy('name')
-          .get()
-          .then((value) {
-        List<QueryDocumentSnapshot<Map<String, dynamic>>> contacts = value.docs;
+      await si.firebaseService.getAllDoc('contacts').then((value) {
+        List<QueryDocumentSnapshot<Map<String, dynamic>>> contacts =
+            value!.docs;
         for (var contact in contacts) {
           contactList.add(
             ContactModel(
@@ -40,7 +37,9 @@ class ContactService {
   Future<ContactModel?> addContact(Map<String, dynamic> data) async {
     ContactModel? contactModel;
     try {
-      await firestore.collection('contacts').add(data).then((value) {
+      await si.firebaseService
+          .addDoc(collection: 'contacts', data: data)
+          .then((value) {
         value.get().then((value) {
           contactModel = ContactModel(
             name: value.data()!['name'],
@@ -58,20 +57,12 @@ class ContactService {
     return contactModel;
   }
 
-  Stream<QuerySnapshot> getContactStream() {
-    Stream<QuerySnapshot>? snapshot;
-    try {
-      snapshot = firestore.collection('contacts').orderBy('name').snapshots();
-    } catch (e) {
-      throw 'Error occured $e';
-    }
-    return snapshot;
-  }
-
   Future<ContactModel?> getOneContact(String id) async {
     ContactModel? contact;
     try {
-      await firestore.collection('contacts').doc(id).get().then((value) {
+      await si.firebaseService
+          .getOneDoc(collection: 'contacts', id: id)
+          .then((value) {
         contact = ContactModel(
           name: value.data()!['name'],
           email: value.data()!['email'],
@@ -85,33 +76,6 @@ class ContactService {
       throw 'Error occured $e';
     }
     return contact;
-  }
-
-  Future<bool?> deleteOneContact(String id) async {
-    bool? isDeleted;
-    try {
-      await firestore.collection('contacts').doc(id).delete().then((value) {
-        isDeleted = true;
-      });
-    } catch (e) {
-      isDeleted = false;
-      throw 'Error occured $e';
-    }
-    return isDeleted;
-  }
-
-  Future<bool?> updateContact(
-      {required String id, required Map<String, dynamic> data}) async {
-    bool? isUpdated;
-    try {
-      await firestore.collection('contacts').doc(id).update(data).then((value) {
-        isUpdated = true;
-      });
-    } catch (e) {
-      isUpdated = false;
-      throw 'Error occured $e';
-    }
-    return isUpdated;
   }
 
   Future<int> savedImage({required String path, required File file}) async {
