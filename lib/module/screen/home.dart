@@ -19,7 +19,7 @@ class _MyHomePageState extends State<MyHomePage> {
         title: const Text('Contact App'),
       ),
       body: StreamBuilder<dynamic>(
-        stream: si.contactService.getContactStream(),
+        stream: si.firebaseService.getDocStream('contacts'),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return Container(
